@@ -1,0 +1,75 @@
+1-How do I trigger a Prometheus alert?
+
+2-What is the difference between node exporter and mysql exporter ?
+
+3-what is the maximum retention period to save data in Prometheus and how to increase it ?
+
+4-What are the different PromQL data types available in Prometheus Expression language?
+
+5-How To calculate the average request duration over the last 5 minutes from a histogram ?
+
+6-What is Thanos Prometheus?
+
+7-what is promtool and how i can use it ?
+
+8-What types of Monitoring can be done via Grafana?
+
+9-Can we see different Servers CPU comparison in Grafana
+
+
+ANSWERS
+
+1- To trigger a Prometheus alert, you need to follow these steps:
+
+a. Define alerting rules: Write alerting rules in Prometheus's configuration file (prometheus.yml) or in separate rule files. These rules define conditions that trigger alerts based on query expressions.
+
+b. Configure Alertmanager: The Alertmanager is a separate component in the Prometheus ecosystem responsible for handling alerts. Configure it to receive and manage alerts from Prometheus.
+
+c. Set up notification channels: Configure notification channels such as email, Slack, PagerDuty, etc., in the Alertmanager so that it can send notifications when alerts are fired.
+
+d. Start Prometheus and Alertmanager: Launch both Prometheus and Alertmanager services, making sure they are correctly configured.
+
+e. Test the alerts: Create test scenarios to trigger the conditions specified in your alerting rules and verify that the notifications are being sent correctly.
+
+2- The main difference between the Node Exporter and the MySQL Exporter is:
+Node Exporter: Node Exporter is an exporter used to collect system-level metrics from the host machine, such as CPU usage, memory consumption, disk space, network statistics, etc. It provides detailed insights into the performance and health of the entire system.
+MySQL Exporter: MySQL Exporter is an exporter used specifically to monitor MySQL database instances. It gathers metrics related to MySQL database performance, including connections, query performance, replication status, buffer pool usage, and more.
+
+3- The maximum retention period to save data in Prometheus is determined by the storage duration set in the Prometheus configuration. By default, Prometheus retains data for 15 days (--storage.tsdb.retention.time=15d). To increase it, you need to modify the prometheus.yml configuration file and change the --storage.tsdb.retention.time parameter to your desired retention duration.
+
+4- The PromQL (Prometheus Query Language) data types available in the Prometheus Expression language are:
+Scalars: Numeric values representing integers or floating-point numbers.
+Strings: Enclosed in single quotes (' ') or double quotes (" "), representing text.
+Time series: Sequences of timestamp-value pairs representing metric data.
+Instant Vectors: A set of time series data, each with a single sample value at a specific timestamp.
+Range Vectors: A set of time series data, each with multiple sample values over a time range.
+
+5- To calculate the average request duration over the last 5 minutes from a histogram, you can use the rate() function combined with the histogram_quantile() function. Here's an example PromQL query:
+scss
+Copy code
+sum(rate(http_request_duration_seconds_bucket{job="your_job_name"}[5m])) by (le)
+/ ignoring (le) count(rate(http_request_duration_seconds_bucket{job="your_job_name"}[5m])) by (le)
+This query calculates the average duration by summing the rates of each bucket and then dividing by the total count of requests in each bucket.
+
+6-Thanos Prometheus is a component of the Thanos project, which enhances Prometheus capabilities by providing long-term storage and high availability. It allows you to extend the retention period of your Prometheus metrics by storing them in object storage like Amazon S3 or Google Cloud Storage. It also enables a global view of metrics by allowing data from multiple Prometheus instances to be queried as if it were a single source.
+
+7-promtool is a command-line utility provided by Prometheus. It is used for various tasks related to Prometheus rule and configuration files. Some of the common uses of promtool include:
+Validating Prometheus rule files.
+Checking Prometheus configuration files for correctness.
+Converting between different rule and alert formats.
+Testing alerting rules against a given time range.
+
+8- Grafana supports various types of monitoring, including:
+Metrics Monitoring: Visualizing and alerting on time-series metrics from sources like Prometheus, Graphite, InfluxDB, etc.
+Log Monitoring: Aggregating and analyzing log data from various log sources like Elasticsearch, Loki, etc.
+Tracing: Observing distributed traces using data from tracing systems like Jaeger, Zipkin, etc.
+Synthetic Monitoring: Simulating user interactions to monitor application performance from different locations.
+Cloud Monitoring: Integrating with cloud providers to monitor resources and services.
+
+9- Yes, you can compare different servers' CPU usage in Grafana. Assuming you are collecting CPU metrics from multiple servers in a time series database like Prometheus, you can create a Grafana dashboard and use a panel to visualize and compare the CPU usage across different servers.
+Here's a general approach to do this:
+a. In Grafana, create a new dashboard and add a new panel of the type "Graph."
+b. In the panel settings, choose the data source (e.g., Prometheus) and write the PromQL query to select the relevant CPU metric from different servers. For example: 100 - avg(rate(node_cpu_seconds_total{mode="idle", job="your_job_name"}[5m])) by (instance).
+c. To make it more readable, you can use the "Alias By" field in the panel settings to rename the series with the server names.
+d. Customize the visualization options as per your preference, such as choosing colors, legends, and time range.
+e. Save the panel, and it will show the CPU usage comparison for the selected servers over the last 5 minutes (as per the provided query).
